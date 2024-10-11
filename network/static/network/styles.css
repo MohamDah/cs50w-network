@@ -1,0 +1,29 @@
+.body {
+    margin: 15px;
+}
+
+#newpost textarea {
+    resize:none;
+    height:100px;
+    width:600px;
+}
+
+.post {
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.edit {
+    position: absolute;
+    right: 25px;
+}
+
+
+.editform textarea {
+    resize:none;
+    width:600px;
+}
+
+.prolink {
+    color: black;
+}

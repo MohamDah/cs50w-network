@@ -1,0 +1,39 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    {% for post in posts %}
+    <div id="{{ post.pk }}" class="border border-dark post">
+        {% if post.poster == user.username %}
+        <div class="editform" style="display: none;">
+            <form class="formitself" action="{% url 'editpost' %}" method="post">
+                {% csrf_token %}
+                <textarea name="text"></textarea>
+                <input type="hidden" name="url" value="{% url 'index' %}">
+                <input type="hidden" name="postpk" value="{{ post.pk }}">
+                <button type="submit" class="btn btn-primary editbtn">Save</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <p class="content" >{{ post.text }}</p>
+        {% if post.poster == user.username %}
+            <button class="btn btn-secondary edit">Edit</button>
+        {% endif %}
+        <p>
+            <strong><a class="prolink" href="{% url 'access_profile' post.poster %}">{{ post.poster }}</a></strong>--- {{ post.date }}---
+            {% if user.is_authenticated %}
+                {% if post.pk in liked_list %}
+                    <img name="unlike" width="22" src="https://www.freeiconspng.com/uploads/like-heart-icon--16.png" alt="likedheart">
+                {% else %}
+                    <img name="like" width="22" src="https://cdn.icon-icons.com/icons2/1812/PNG/512/4213423-active-favorite-heart-like-love-romantic_115369.png" alt="likeheart">
+                {% endif %}
+            {% else %}
+                <a href="{% url 'login' %}"><img name="" width="22" src="https://cdn.icon-icons.com/icons2/1812/PNG/512/4213423-active-favorite-heart-like-love-romantic_115369.png" alt="likeheart"></a>
+            {% endif %}
+
+            <span class="counter">{{ post.likers.count }}</span>
+        </p>
+
+    </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <div>
+        <div>
+            <h2>{{ profile.username }}</h2>
+        </div>
+        <div>
+            <span>Following: {{ following.count }},</span>
+            <span>Followers: {{ followers.count }}</span>
+        </div>
+
+        <div>
+            {% if profile != user %}
+                {% if status.count == 0 %}
+                    <form action="{% url 'profile' profile.pk %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="reason" value="follow">
+                        <button class="btn btn-secondary">Follow</button>
+                    </form>
+                {% else %}
+                    <form action="{% url 'profile' profile.pk %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="reason" value="unfollow">
+                        <button class="btn btn-secondary">Unfollow</button>
+                    </form>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <hr>
+
+    {% for post in posts %}
+    <div id="{{ post.pk }}" class="border border-dark post">
+        {% if post.poster == user.username %}
+        <div class="editform" style="display: none;">
+            <form class="formitself" action="{% url 'editpost' %}" method="post">
+                {% csrf_token %}
+                <textarea name="text"></textarea>
+                <input type="hidden" name="url" value="{% url 'profile' profile.pk %}">
+                <input type="hidden" name="postpk" value="{{ post.pk }}">
+                <button type="submit" class="btn btn-primary editbtn">Save</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <p class="content" >{{ post.text }}</p>
+        {% if post.poster == user.username %}
+            <button class="btn btn-secondary edit">Edit</button>
+        {% endif %}
+        <p>
+            <strong>{{ post.poster }}</strong>--- {{ post.date }}---
+            {% if user.is_authenticated %}
+                {% if post.pk in liked_list %}
+                    <img name="unlike" width="22" src="https://www.freeiconspng.com/uploads/like-heart-icon--16.png" alt="likedheart">
+                {% else %}
+                    <img name="like" width="22" src="https://cdn.icon-icons.com/icons2/1812/PNG/512/4213423-active-favorite-heart-like-love-romantic_115369.png" alt="likeheart">
+                {% endif %}
+            {% else %}
+                <a href="{% url 'login' %}"><img width="22" src="https://cdn.icon-icons.com/icons2/1812/PNG/512/4213423-active-favorite-heart-like-love-romantic_115369.png" alt="likeheart"></a>
+            {% endif %}
+
+            <span class="counter">{{ post.likers.count }}</span>
+        </p>
+    </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <div id="newpost">
+        <h2>Make a new post:</h2>
+        {% if message %}
+            <div>{{ message }}</div>
+        {% endif %}
+        <form action="{% url 'newpost' %}" method="post">
+            {% csrf_token %}
+            <textarea autofocus name="text"></textarea>
+            <br>
+            <button type="submit" class="btn btn-primary">Post</button>
+        </form>
+    </div>
+
+{% endblock %}

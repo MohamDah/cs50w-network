@@ -1,0 +1,62 @@
+{% extends 'network/layout.html' %}
+
+{% block body %}
+    {% for post in posts %}
+        <div id="{{ post.pk }}" class="border border-dark post">
+            {% if post.poster == user.username %}
+            <div class="editform" style="display: none;">
+                <form class="formitself" action="{% url 'editpost' %}" method="post">
+                    {% csrf_token %}
+                    <textarea name="text"></textarea>
+                    <input type="hidden" name="url" value="{% url 'paged' page.number %}">
+                    <input type="hidden" name="postpk" value="{{ post.pk }}">
+                    <button type="submit" class="btn btn-primary editbtn">Save</button>
+                </form>
+            </div>
+            {% endif %}
+
+            <p class="content" >{{ post.text }}</p>
+            {% if post.poster == user.username %}
+                <button class="btn btn-secondary edit">Edit</button>
+            {% endif %}
+            <p>
+                <strong><a class="prolink" href="{% url 'access_profile' post.poster %}">{{ post.poster }}</a></strong>--- {{ post.date }}---
+                {% if user.is_authenticated %}
+                    {% if post.pk in liked_list %}
+                        <img name="unlike" width="22" src="https://www.freeiconspng.com/uploads/like-heart-icon--16.png" alt="likedheart">
+                    {% else %}
+                        <img name="like" width="22" src="https://cdn.icon-icons.com/icons2/1812/PNG/512/4213423-active-favorite-heart-like-love-romantic_115369.png" alt="likeheart">
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'login' %}"><img name="" width="22" src="https://cdn.icon-icons.com/icons2/1812/PNG/512/4213423-active-favorite-heart-like-love-romantic_115369.png" alt="likeheart"></a>
+                {% endif %}
+
+                <span class="counter">{{ post.likers.count }}</span>
+            </p>
+        </div>
+    {% endfor %}
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            {% if page.has_previous == True %}
+                <li class="page-item"><a class="page-link" href="{% url 'paged' page.previous_page_number %}">Previous</a></li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                </li>
+            {% endif %}
+
+            {% for n in amount %}
+                <li class="page-item"><a class="page-link" href="{% url 'paged' n %}">{{ n }}</a></li>
+            {% endfor %}
+
+            {% if page.has_next == True %}
+                <li class="page-item"><a class="page-link" href="{% url 'paged' page.next_page_number %}">Next</a></li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+      </nav>
+{% endblock %}
